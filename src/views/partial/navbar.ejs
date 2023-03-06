@@ -56,7 +56,7 @@
             alt="Your Company"
           />
         </div>
-        <div class="hidden sm:ml-6 sm:block">
+        <div class="hidden flex sm:block">
           <div class="flex space-x-4">
             <a
               href="/"
@@ -64,23 +64,122 @@
               id="home-link"
               >Home</a
             >
-
             <a
               href="/nations"
               class="text-gray-300 hover:bg-blue-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
               id="nations-link"
               >Nations</a
             >
-
             <a
               href="/players"
               class="text-gray-300 hover:bg-blue-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
               id="players-link"
               >Players</a
             >
+            <div class="relative ml-3 flex items-center text-center">
+              <div>
+                <% if (isLogin ) { %>
+                <button
+                  type="button"
+                  class="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                  id="user-menu-button"
+                  aria-expanded="false"
+                  aria-haspopup="true"
+                  onclick="dropdownMenu()"
+                >
+                  <span class="sr-only">Open user menu</span>
+                  <img
+                    class="h-8 w-8 rounded-full"
+                    src="https://ui-avatars.com/api/?name=<%=user.name%>&background=0D8ABC&color=fff&size=32"
+                    alt=""
+                  />
+                </button>
+                <% } %> <% if (!isLogin) { %>
+                <a
+                  href="/auth/login"
+                  class="text-gray-300 bg-blue-500 hover:text-white px-3 py-1 rounded-md text-sm font-medium"
+                >
+                  Login
+                </a>
+                <% } %>
+              </div>
+              <div
+                id="dropdown-menu"
+                class="absolute hidden right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none top-[40px]"
+                role="menu"
+                aria-orientation="vertical"
+                aria-labelledby="user-menu-button"
+                tabindex="-1"
+              >
+                <!-- Active: "bg-gray-100", Not Active: "" -->
+                <a
+                  href="/user/me"
+                  class="block px-4 py-2 text-sm text-gray-700"
+                  role="menuitem"
+                  tabindex="-1"
+                  id="user-menu-item-0"
+                  >Your Profile</a
+                >
+                <a
+                  href="/user/change-password"
+                  class="block px-4 py-2 text-sm text-gray-700"
+                  role="menuitem"
+                  tabindex="-1"
+                  id="user-menu-item-1"
+                  >Change Password</a
+                >
+                <% if (isLogin && user.isAdmin ) { %>
+                <a
+                  href="/accounts"
+                  class="block px-4 py-2 text-sm text-gray-700"
+                  role="menuitem"
+                  tabindex="-1"
+                  id="user-menu-item-1"
+                  >View All Users</a
+                >
+                <% } %>
+                <a
+                  href="/auth/logout"
+                  class="block px-4 py-2 text-sm text-gray-700"
+                  role="menuitem"
+                  tabindex="-1"
+                  id="user-menu-item-2"
+                  >Sign out</a
+                >
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </nav>
+
+<script>
+  $(document).ready(function () {
+    let path = window.location.pathname;
+    switch (path) {
+      case "/nations":
+        setCurrentLink("#nations-link");
+        break;
+      case "/players":
+        setCurrentLink("#players-link");
+        break;
+      case "/":
+        setCurrentLink("#home-link");
+        break;
+    }
+  });
+  const setCurrentLink = (id) => {
+    $(id).removeClass("text-gray-300 hover:bg-gray-700 hover:text-white");
+    $(id).addClass("bg-blue-500 text-white");
+  };
+  const dropdownMenu = () => {
+    let dropdown = document.getElementById("dropdown-menu");
+    if (dropdown.classList.contains("hidden")) {
+      dropdown.classList.remove("hidden");
+    } else {
+      dropdown.classList.add("hidden");
+    }
+  };
+</script>

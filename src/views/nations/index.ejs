@@ -12,6 +12,7 @@
             <h1 class="text-xl font-semibold text-black">All Nations</h1>
           </div>
           <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+            <% if (isLogin && user.isAdmin) { %>
             <button
               type="button"
               class="block rounded-md bg-blue-500 text-white py-1.5 px-3 text-center text-sm font-semibold leading-6 text-black hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
@@ -19,6 +20,7 @@
             >
               Add New Nation
             </button>
+            <% } %>
           </div>
         </div>
         <div class="mt-8 flow-root">
@@ -27,15 +29,16 @@
               class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8"
             >
               <table class="min-w-full divide-y divide-gray-700">
-                
                 <div class="grid grid-cols-4 gap-5">
                   <% nations.forEach((nation,i) => { %>
-                  <div class="flex items-center flex-col border-gray-500 border-solid border-[1px] max-w-[250px]">
+                  <div
+                    class="flex items-center flex-col border-gray-500 border-solid border-[1px] max-w-[250px]"
+                  >
                     <div
-                      class="whitespace-nowrap text-sm font-medium text-black sm:pl-0 w-[250px] h-[143px] flex justify-center"
+                      class="whitespace-nowrap text-sm font-medium text-black sm:pl-0 w-full h-[143px] flex justify-center"
                     >
                       <img
-                        src="<%= nations[i].image %>" 
+                        src="<%= nations[i].image %>"
                         class="w-full h-[143px] border-[1px] border-solid border-gray-500 object-cover"
                         alt="<%= nations[i].name %>"
                       />
@@ -50,8 +53,9 @@
                     >
                       <%= nations[i].description %>
                     </div>
+                    <% if (isLogin && user.isAdmin) { %>
                     <div
-                      class="whitespace-nowrap py-4 px-3 text-sm text-gray-500 flex gap-2 h-full"
+                      class="whitespace-nowrap py-4 px-3 text-sm text-gray-500 flex gap-2 h-full flex-col sm:flex-row"
                     >
                       <button
                         type="button"
@@ -68,9 +72,10 @@
                         Delete
                       </button>
                     </div>
+                    <% } %>
                   </div>
                   <% }); %>
-                </tbody>
+                </div>
               </table>
             </div>
           </div>
@@ -296,7 +301,6 @@
         modal.classList.add("hidden");
       }
     };
-
     const toggleUpdateModal = (id, nationId) => {
       const modal = document.getElementById(id);
       if (modal.classList.contains("hidden")) {
@@ -304,7 +308,6 @@
       } else {
         modal.classList.add("hidden");
       }
-
       axios
         .get(`/nations/${nationId}`)
         .then((res) => {
@@ -319,63 +322,67 @@
           console.log(err);
         });
     };
-
     const postNation = () => {
       const name = document.getElementById("name").value;
       const description = document.getElementById("description").value;
       const image = document.getElementById("image").value;
-
       const data = {
         name,
         description,
         image,
       };
-
-      if(data.name !== '' && data.description !== '' && data.image && data.name){
+      if (
+        data.name !== "" &&
+        data.description !== "" &&
+        data.image &&
+        data.name
+      ) {
         axios
-        .post("/nations", data)
-        .then((res) => {
-          console.log(res);
-          alert("Nation added successfully");
-          toggleModal("add-modal-nations");
-          setTimeout(() => {
-            location.reload();
-          }, 1000);
-        })
-        .catch((err) => {
-          alert("Input Again!!!")
-        });
-      };
+          .post("/nations", data)
+          .then((res) => {
+            console.log(res);
+            alert("Nation added successfully");
+            toggleModal("add-modal-nations");
+            setTimeout(() => {
+              location.reload();
+            }, 1000);
+          })
+          .catch((err) => {
+            alert("Input Again!!!");
+          });
+      }
     };
-
     const putNation = () => {
       const id = document.getElementById("uId").value;
       const name = document.getElementById("uName").value;
       const description = document.getElementById("uDescription").value;
       const image = document.getElementById("uImage").value;
-
       const data = {
         name,
         description,
         image,
       };
-       if(data.name !== '' && data.description !== '' && data.image && data.name){
-      axios
-        .put(`/nations/${id}`, data)
-        .then((res) => {
-          console.log(res);
-          alert("Nation updated successfully");
-          toggleModal("update-modal");
-          setTimeout(() => {
-            location.reload();
-          }, 1000);
-        })
-        .catch((err) => {
-          alert("Input Again!!!")
-        });
-      };
+      if (
+        data.name !== "" &&
+        data.description !== "" &&
+        data.image &&
+        data.name
+      ) {
+        axios
+          .put(`/nations/${id}`, data)
+          .then((res) => {
+            console.log(res);
+            alert("Nation updated successfully");
+            toggleModal("update-modal");
+            setTimeout(() => {
+              location.reload();
+            }, 1000);
+          })
+          .catch((err) => {
+            alert("Input Again!!!");
+          });
+      }
     };
-
     const deleteNation = (id) => {
       const isDelete = confirm("Are you sure you want to delete?");
       if (!isDelete) return;
@@ -389,10 +396,9 @@
           }, 1000);
         })
         .catch((err) => {
-          console.log(err);
+          toastify("Can't Delete!!!", "#dc3545");
         });
     };
-
     // const toastify = (message, color) => {
     //   Toastify({
     //     text: message,

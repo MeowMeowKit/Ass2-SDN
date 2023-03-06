@@ -4,14 +4,16 @@ const playerSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
+    unique: true,
   },
   image: {
     type: String,
     required: true,
   },
-  nation: {
-    type: String,
-    required: true,
+  nations: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "nations",
+    require: true,
   },
   position: {
     type: String,

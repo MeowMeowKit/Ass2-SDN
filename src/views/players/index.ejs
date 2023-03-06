@@ -12,6 +12,7 @@
             <h1 class="text-xl font-semibold text-black">All Player</h1>
           </div>
           <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+            <% if (isLogin && user.isAdmin) { %>
             <button
               type="button"
               class="block rounded-md bg-blue-500 py-1.5 px-3 text-center text-sm font-semibold leading-6 text-black hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 text-white"
@@ -19,6 +20,7 @@
             >
               Add player
             </button>
+            <% } %>
           </div>
         </div>
         <div class="mt-8 flow-root">
@@ -27,12 +29,14 @@
               class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8"
             >
               <table class="min-w-full divide-y divide-gray-700">
-                <div class="grid grid-cols-4 gap-5">
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-5">
                   <% players.forEach((player,i) => { %>
 
-                  <div class="flex items-center flex-col border-gray-500 border-solid border-[1px] max-w-[250px]"> 
+                  <div
+                    class="flex items-center flex-col border-gray-500 border-solid border-[1px] max-w-[250px]"
+                  >
                     <div
-                      class="whitespace-nowrap text-sm font-medium text-black sm:pl-0 w-[250px] h-[300px] flex justify-center"
+                      class="whitespace-nowrap text-sm font-medium text-black sm:pl-0 w-full h-[300px] flex justify-center"
                     >
                       <img
                         src="<%= player.image %>"
@@ -41,45 +45,53 @@
                       />
                     </div>
                     <h1
-                      class="whitespace-nowrap py-4 px-3 text-lg text-gray-500 flex"
+                      class="whitespace-nowrap py-1 px-3 text-lg text-gray-500 flex"
                     >
-                    <p class="uppercase font-bold">Name: </p> 
-                       <%= player.name %>
-                  </h1>
+                      <p class="uppercase font-bold">Name:</p>
+                      <%= player.name %>
+                    </h1>
                     <div
-                      class="whitespace-nowrap py-4 px-3 text-lg text-gray-500 flex"
+                      class="whitespace-nowrap py-1 px-3 text-lg text-gray-500 flex"
                     >
-                     <p class="uppercase font-bold">Nation: </p> 
-                      <%= player.nation %>
+                      <p class="uppercase font-bold">Nation:</p>
+                      <%= player.nations ? player.nations.name : "" %>
                     </div>
                     <div
-                      class="whitespace-nowrap py-4 px-3 text-lg text-gray-500 flex"
+                      class="whitespace-nowrap py-1 px-3 text-lg text-gray-500 flex"
                     >
-                     <p class="uppercase font-bold">Position: </p> 
+                      <p class="uppercase font-bold">Position:</p>
                       <%= player.position %>
                     </div>
                     <div
-                      class="whitespace-nowrap py-4 px-3 text-lg text-gray-500 flex"
+                      class="whitespace-nowrap py-1 px-3 text-lg text-gray-500 flex"
                     >
-                     <p class="uppercase font-bold">Goal: </p> 
-                     <%= player.goal %> 
+                      <p class="uppercase font-bold">Goal:</p>
+                      <%= player.goal %>
                     </div>
                     <div
-                      class="whitespace-nowrap py-4 px-3 text-lg text-gray-500 flex"
+                      class="whitespace-nowrap py-1 px-3 text-lg text-gray-500 flex"
                     >
-                     <p class="uppercase font-bold">Captain: </p> 
-                       <%= player.isCaptain %>
+                      <p class="uppercase font-bold">Captain:</p>
+                      <%= player.isCaptain ? "YES" : "NO" %>
                     </div>
                     <div
-                      class="whitespace-nowrap py-4 px-3 text-lg text-gray-500 flex gap-2 h-full"
+                      class="whitespace-nowrap py-1 px-3 text-lg text-gray-500 flex gap-2 h-full flex-col sm:flex-row"
                     >
-                      <button
+                      <% if (isLogin && user.isAdmin) { %>
+                      <!-- <button
                         type="button"
                         class="block rounded-md bg-blue-500 py-1.5 px-3 text-center text-sm font-semibold leading-6 text-black hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 text-white"
                         onclick="toggleUpdateModal('update-modal', '<%= player.id %>')"
                       >
                         Update
-                      </button>
+                      </button> -->
+                      <a
+                        href="/players/<%= player.id %>"
+                        type="button"
+                        class="block rounded-md bg-blue-500 py-1.5 px-3 text-center text-sm font-semibold leading-6 text-black hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500 text-white cursor-pointer"
+                      >
+                        Details
+                      </a>
                       <button
                         type="button"
                         onclick="deletePlayer('<%= player.id %>')"
@@ -87,10 +99,11 @@
                       >
                         Delete
                       </button>
+                      <% } %>
                     </div>
                   </div>
                   <% }); %>
-                </tbody>
+                </div>
               </table>
             </div>
           </div>
@@ -166,12 +179,15 @@
                         >Nation</label
                       >
                       <select
-                        id="nation"
-                        name="nation"
-                        class="mt-1 block w-full border rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                        id="nations"
+                        name="nations"
+                        required
+                        class="mt-1 block w-full border rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                       >
                         <% nations.forEach((nation,i) => { %>
-                        <option><%= nations[i].name %></option>
+                        <option value="<%= nation._id%>">
+                          <%= nation.name%>
+                        </option>
                         <% }); %>
                       </select>
                     </div>
@@ -202,6 +218,7 @@
                           type="number"
                           name="goal"
                           id="goal"
+                          min="0"
                           class="block w-full py-2 px-4 rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                           placeholder="10"
                           required
@@ -229,7 +246,7 @@
               <div class="mt-5 sm:mt-6 flex gap-2">
                 <button
                   type="submit"
-                  class="inline-flex w-full justify-center rounded-md border border-transparent text-white bg-blue-600 px-4 py-2 text-base font-medium text-black shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:text-sm "
+                  class="inline-flex w-full justify-center rounded-md border border-transparent text-white bg-blue-600 px-4 py-2 text-base font-medium text-black shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:text-sm"
                   onclick="postPlayer()"
                 >
                   Add player
@@ -322,7 +339,8 @@
                         name="uNation"
                         class="mt-1 block w-full border rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
                       >
-                        <% nations.forEach((nation,i) => { %>                                              <option><%= nations[i].name %></option>
+                        <% nations.forEach((nation,i) => { %>
+                        <option><%= nations[i].name %></option>
                         <% }); %>
                       </select>
                     </div>
@@ -352,6 +370,7 @@
                         <input
                           type="number"
                           name="uGoal"
+                          min="0"
                           id="uGoal"
                           class="block w-full py-2 px-4 rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                           placeholder="12"
@@ -442,7 +461,7 @@
 
     const postPlayer = () => {
       const name = document.getElementById("name").value;
-      const nation = document.getElementById("nation").value;
+      const nations = document.getElementById("nations").value;
       const position = document.getElementById("position").value;
       const goal = document.getElementById("goal").value;
       const isCaptain = document.getElementById("isCaptain").value;
@@ -453,31 +472,29 @@
         image,
         position,
         goal,
-        nation,
+        nations,
         isCaptain: isCaptain === "true" ? true : false,
       };
-      if( name && position && nation && goal && image && isCaptain){
-      axios
-        .post("/players", data)
-        .then((res) => {
-          console.log(res);
-          alert("Player added successfully");
-          toggleModal("add-modal");
-          setTimeout(() => {
-            location.reload();
-          }, 1000);
-        })
-        .catch((err) => {
-          alert("Input Again!!!");
-        });
+      if (name && position && nations && goal >= 0 && image && isCaptain) {
+        axios
+          .post("/players", data)
+          .then((res) => {
+            console.log(res);
+            toastify("Player added successfully!!!", "#28a745");
+            setTimeout(() => {
+              location.reload();
+            }, 1000);
+          })
+          .catch((err) => {
+            alert("Input Again!!!");
+          });
       }
-
     };
 
     const putPlayer = () => {
       const id = document.getElementById("uId").value;
       const name = document.getElementById("uName").value;
-      const nation = document.getElementById("uNation").value;
+      const nations = document.getElementById("uNation").value;
       const position = document.getElementById("uPosition").value;
       const goal = document.getElementById("uGoal").value;
       const isCaptain = document.getElementById("uIsCaptain").value;
@@ -488,28 +505,25 @@
         image,
         position,
         goal,
-        nation,
+        nations,
         isCaptain: isCaptain === "true" ? true : false,
       };
 
       console.log(data);
 
-       if( name && position && nation && goal && image && isCaptain){
-          axios
-        .put(`/players/${id}`, data)
-        .then((res) => {
-          console.log(res);
-          alert("Player updated successfully");
-          toggleModal("update-modal");
-          setTimeout(() => {
-            location.reload();
-          }, 1000);
-        })
-        .catch((err) => {
-          alert("Input Again!!!");
-        });
+      if (name && position && nations && goal >= 0 && image && isCaptain) {
+        axios
+          .put(`/players/${id}`, data)
+          .then((res) => {
+            toggleModal("update-modal");
+            setTimeout(() => {
+              location.reload();
+            }, 1000);
+          })
+          .catch((err) => {
+            alert("Input Again!!!");
+          });
       }
-
     };
 
     const deletePlayer = (id) => {
@@ -519,8 +533,7 @@
       axios
         .delete(`/players/${id}`)
         .then((res) => {
-          console.log(res);
-          alert("Player deleted successfully");
+          toastify("Player deleted successfully!!!", "#dc3545");
           setTimeout(() => {
             location.reload();
           }, 1000);
@@ -529,6 +542,5 @@
           console.log(err);
         });
     };
-
   </script>
 </html>
